@@ -1,7 +1,6 @@
 package com.spencerwi.either;
 
 import java.util.NoSuchElementException;
-import java.util.function.Function;
 
 public abstract class Result<R> {
 

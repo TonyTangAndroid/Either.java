@@ -1,9 +1,6 @@
 package com.spencerwi.either;
 
 import java.util.NoSuchElementException;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.Consumer;
 
 public abstract class Either<L, R> {
 
