@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@DisplayName("Either with Java")
 public class EitherTest {
 
     @Test
@@ -87,6 +89,62 @@ public class EitherTest {
             assertThat(result.getLeft()).isEqualTo("TEST");
         }
         @Test
+        public void executesLeftTransformation_whenMappedLeft(){
+            Either<String, Integer> leftOnly = Either.left("test");
+
+            Either<String, Integer> result = leftOnly.mapLeft(
+                (leftSide) -> leftSide.toUpperCase()
+            );
+
+            assertThat(result).isInstanceOf(Either.Left.class);
+            assertThat(result.getLeft()).isEqualTo("TEST");
+        }
+        @Test
+        public void noOps_whenMappedRight(){
+            Either<String, Integer> leftOnly = Either.left("test");
+
+            Either<String, Integer> result = leftOnly.mapRight(
+                (rightSide) -> rightSide * 2
+            );
+
+            assertThat(result).isInstanceOf(Either.Left.class);
+            assertThat(result.getLeft()).isEqualTo("test");
+        }
+		@Test
+		public void executesLeftTransformationAndUnwraps_whenFlatMapped(){
+            Either<String, Integer> leftOnly = Either.left("test");
+
+            Either<String, Integer> result = leftOnly.flatMap(
+                (leftSide) -> Either.left(leftSide.toUpperCase()),
+                (rightSide) -> Either.right(rightSide * 2)
+            );
+
+            assertThat(result).isInstanceOf(Either.Left.class);
+            assertThat(result.getLeft()).isEqualTo("TEST");
+		}
+		@Test
+		public void executesLeftTransformationAndUnwraps_whenFlatMappedLeft(){
+            Either<String, Integer> leftOnly = Either.left("test");
+
+            Either<String, Integer> result = leftOnly.flatMapLeft(
+                (leftSide) -> Either.left(leftSide.toUpperCase())
+            );
+
+            assertThat(result).isInstanceOf(Either.Left.class);
+            assertThat(result.getLeft()).isEqualTo("TEST");
+		}
+		@Test
+		public void noOps_whenFlatMappedRight(){
+            Either<String, Integer> leftOnly = Either.left("test");
+
+            Either<String, Integer> result = leftOnly.flatMapRight(
+                (rightSide) -> Either.right(rightSide * 2)
+            );
+
+            assertThat(result).isInstanceOf(Either.Left.class);
+            assertThat(result.getLeft()).isEqualTo("test");
+		}
+        @Test
         public void runsLeftConsumer_WhenRunIsCalled(){
             Either<String, Integer> leftOnly = Either.left("test");
             WrapperAroundBoolean leftHasBeenRun = new WrapperAroundBoolean(false);
@@ -97,6 +155,34 @@ public class EitherTest {
             );
 
             assertThat(leftHasBeenRun.get()).isEqualTo(true);
+        }
+        @Test
+        void returnsValue_when_getLeftOrElseThrow() {
+            Either<String, Integer> leftEither = Either.left("foo");
+
+            assertThat(leftEither.getLeftOrElseThrow(() -> new RuntimeException("Int not accepted"))).isEqualTo("foo");
+        }
+        @Test
+        void returnsValue_when_getLeftOrElseThrowWithRightFunction() {
+            Either<String, Integer> leftEither = Either.left("foo");
+
+            assertThat(leftEither.getLeftOrElseThrow(i -> new RuntimeException("Int not accepted " + i))).isEqualTo("foo");
+        }
+        @Test
+        void throwsSuppliedException_when_getRightOrElseThrow() {
+            Either<String, Integer> leftEither = Either.left("foo");
+
+            assertThatThrownBy(() -> leftEither.getRightOrElseThrow(() -> new RuntimeException("String not accepted")))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage("String not accepted");
+        }
+        @Test
+        void throwsTransformedLeftException_when_getRightOrElseThrow() {
+            Either<String, Integer> leftEither = Either.left("foo");
+
+            assertThatThrownBy(() -> leftEither.getRightOrElseThrow(s -> new RuntimeException("String not accepted " + s)))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("String not accepted foo");
         }
         @Test
         public void isEqualToOtherLeftsHavingTheSameLeftValue(){
@@ -186,6 +272,62 @@ public class EitherTest {
             assertThat(result.getRight()).isEqualTo(42*2);
         }
         @Test
+        public void executesRightTransformation_whenMappedRight(){
+            Either<String, Integer> rightOnly = Either.right(42);
+
+            Either<String, Integer> result = rightOnly.mapRight(
+                (rightSide) -> rightSide * 2
+            );
+
+            assertThat(result).isInstanceOf(Either.Right.class);
+            assertThat(result.getRight()).isEqualTo(42*2);
+        }
+        @Test
+        public void noOps_whenMappedLeft(){
+            Either<String, Integer> rightOnly = Either.right(42);
+
+            Either<String, Integer> result = rightOnly.mapLeft(
+                (leftSide) -> leftSide.toUpperCase()
+            );
+
+            assertThat(result).isInstanceOf(Either.Right.class);
+            assertThat(result.getRight()).isEqualTo(42);
+        }
+        @Test
+        public void executesRightTransformationAndUnwraps_whenFlatMapped(){
+            Either<String, Integer> rightOnly = Either.right(42);
+
+            Either<String, Integer> result = rightOnly.flatMap(
+                (leftSide) -> Either.left(leftSide.toUpperCase()),
+                (rightSide) -> Either.right(rightSide * 2)
+            );
+
+            assertThat(result).isInstanceOf(Either.Right.class);
+            assertThat(result.getRight()).isEqualTo(42*2);
+        }
+        @Test
+        public void executesRightTransformationAndUnwraps_whenFlatMappedRight(){
+            Either<String, Integer> rightOnly = Either.right(42);
+
+            Either<String, Integer> result = rightOnly.flatMapRight(
+                (rightSide) -> Either.right(rightSide * 2)
+            );
+
+            assertThat(result).isInstanceOf(Either.Right.class);
+            assertThat(result.getRight()).isEqualTo(42*2);
+        }
+        @Test
+        public void noOps_whenFlatMappedLeft(){
+            Either<String, Integer> rightOnly = Either.right(42);
+
+            Either<String, Integer> result = rightOnly.flatMapLeft(
+                (leftSide) -> Either.left(leftSide.toUpperCase())
+            );
+
+            assertThat(result).isInstanceOf(Either.Right.class);
+            assertThat(result.getRight()).isEqualTo(42);
+        }
+        @Test
         public void runsRightConsumer_WhenRunIsCalled(){
             Either<String, Integer> rightOnly = Either.right(42);
             WrapperAroundBoolean rightHasBeenRun = new WrapperAroundBoolean(false);
@@ -196,6 +338,32 @@ public class EitherTest {
             );
 
             assertThat(rightHasBeenRun.get()).isEqualTo(true);
+        }
+        @Test
+        void returnsValue_when_getRightOrElseThrow() {
+            Either<String, Integer> rightEither = Either.right(1);
+            assertThat(rightEither.getRightOrElseThrow(() -> new RuntimeException("Int not accepted"))).isEqualTo(1);
+        }
+        @Test
+        void returnsValue_when_getRightOrElseThrowWithLeftFunction() {
+            Either<String, Integer> rightEither = Either.right(1);
+            assertThat(rightEither.getRightOrElseThrow(s -> new RuntimeException("Int not accepted " + s))).isEqualTo(1);
+        }
+        @Test
+        void throwsSuppliedException_when_getLeftOrElseThrow() {
+            Either<String, Integer> rightEither = Either.right(1);
+
+            assertThatThrownBy(() -> rightEither.getLeftOrElseThrow(() -> new RuntimeException("String not accepted")))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage("String not accepted");
+        }
+        @Test
+        void throwsTransformedRightException_when_getLeftOrElseThrow() {
+            Either<String, Integer> rightEither = Either.right(1);
+
+            assertThatThrownBy(() -> rightEither.getLeftOrElseThrow(s -> new RuntimeException("String not accepted " + s)))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("String not accepted 1");
         }
         @Test
         public void isEqualToOtherRightsHavingTheSameRightValue(){
@@ -287,7 +455,7 @@ public class EitherTest {
     }
 
     public static class WrapperAroundBoolean {
-        private boolean value; 
+        private boolean value;
         public WrapperAroundBoolean(){ this.value = false; }
         public WrapperAroundBoolean(boolean value) { this.value = value; }
         public void set(boolean value){ this.value = value; }
