@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: "de.mannodermaus.android-junit5"
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
@@ -25,7 +25,7 @@ android {
 }
 dependencies {
     api project(path: ':java8_backport')
-    testImplementation "org.assertj:assertj-core:3.14.0"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.2"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.2"
+    testImplementation "org.assertj:assertj-core:3.21.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.7.0"
 }
