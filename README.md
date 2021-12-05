@@ -1,7 +1,7 @@
 Either.java
 ===========
 
-[![Build Status](https://travis-ci.org/spencerwi/Either.java.svg?branch=master)](https://travis-ci.org/spencerwi/Either.java)
+![Java CI with Maven](https://github.com/spencerwi/Either.java/workflows/Java%20CI%20with%20Maven/badge.svg?branch=master)
 
 A right-biased implementation of Haskell's `Either a b` for Java, using Java 8 for mapping/folding and type inference. 
 
@@ -65,6 +65,9 @@ For this reason, this Either is right-biased; if you give it `Either.either(()->
 needs to be a predictable rule-of-thumb for how to handle it when the Either gets *both* a left value *and* a right 
 value (after all, it's called an *Either*, not a *Both*).
 
+`Result`
+------
+
 Because this errors-to-the-left, results-to-the-right idiom is so common, this library also includes a `Result<T>` class, 
 which instead of being `Left<L,R>` or `Right<L,R>` is `Err<T>` or `Ok<T>`. Instead of `Either.either(() -> "left",  () -> 42)`,
 the constructor method you'll want is `Result.attempt(() -> someMethodThatMightThrowAnException())`. You can even chain
@@ -93,6 +96,6 @@ Simple! It's in Maven Central, so just add this to your pomfile (or the equivale
 <dependency>
     <groupId>com.spencerwi</groupId>
     <artifactId>Either.java</artifactId>
-    <version>2.2.0</version>
+    <version>2.7.0</version>
 </dependency>
 ```
